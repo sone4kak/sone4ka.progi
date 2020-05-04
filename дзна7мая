@@ -1,0 +1,129 @@
+#include <iostream>
+#include <string>
+#include <clocale>
+using namespace std;
+
+void AxB(int N1,int M1,int N2, int M2,float (&A)[10][10],float (&B)[10][10],float (&C)[10][10]){int i,j,l,p;
+if (M1!=N2){cout<<"the product doesn't exist";}else{
+
+
+for (i=0;i<N1;i++){for (j=0;j<M2;j++){C[i][j]=0;}}
+
+for (i=0;i<N1;i++){for (j=0;j<M2;j++){for (l=0;l<M1;l++){C[i][j]=C[i][j]+A[i][l]*B[l][j];}
+} }
+
+for (i=0;i<N1;i++){for (j=0;j<M2;j++){cout<<C[i][j]<<" ";} cout<<endl;} cout<<endl<<endl;}}
+
+
+void cut_arr(int a,int b,int &N,float (&H)[10][10]){int i,j;
+for (j=b;j<N;j++){for (i=0;i<N;i++){H[i][j]=H[i][j+1];}}
+
+for (i=a;i<N;i++){for (j=0;j<N-1;j++){H[i][j]=H[i+1][j];}}
+N=N-1;
+}
+
+float determ_of_2(float H[10][10]){
+float k;
+k=H[0][0]*H[1][1]-H[0][1]*H[1][0];
+return k;
+}
+
+
+float val(int a,int b){
+int l;
+if ((a+b)%2==0){l=1;}else {l=(-1);}
+
+return l;
+}
+
+void copy_arr(float H[10][10], float (&D)[10][10]){
+int i,j;
+for (i=0;i<10;i++){for (j=0;j<10;j++){D[i][j]=H[i][j];}}
+}
+
+float determ (int N,float (&H)[10][10]){
+int n=N;
+float k=0;
+float l;
+if (n==2) k=k+determ_of_2(H);
+
+int i,j;
+float D[10][10];
+if (N>2){for (j=0;j<N;j++){n=N;
+copy_arr(H,D);
+cut_arr(0,j,n,D); l=val(1,j+1); k=k+determ(n,D)*l*H[0][j];}
+}
+
+return k;}
+
+
+void transp(int N,float (&H)[10][10]){
+float D[N][N];
+int i,j;
+for (i=0;i<N;i++){for (j=0;j<N;j++){D[j][i]=H[i][j];}}
+for (i=0;i<N;i++){for (j=0;j<N;j++){H[i][j]=D[i][j]; }}
+
+}
+
+void alg_dop(int N,float D[10][10], float (&H)[10][10]){
+float H1[10][10]; int n=N;
+int i,j;
+for (i=0;i<N;i++){for (j=0;j<N;j++){copy_arr(D,H1);cut_arr(i,j,n,H1); if (n>=2){H[i][j]=val(i,j)*determ(n,H1);} if (n==1){H[i][j]=H1[0][0]*val(i,j);}  n=N;}cout<<endl;}
+
+}
+
+
+void Obr(int N,float (&H)[10][10]){int i,j;
+    float D[10][10]; copy_arr(H,D);
+alg_dop(N,D,H);
+transp(N,H);
+for (i=0;i<N;i++){for (j=0;j<N;j++){H[i][j]=(float)(H[i][j]/determ(N,D));}
+}
+}
+
+int main()
+{float A[10][10], B[10][10], C[10][10]; int N,i,j; setlocale(LC_CTYPE, "rus");
+string line;
+cout<<"Введите уравнение"<<endl;
+getline(cin,line);
+
+do {
+cout<<"Введите размерность матрицы А <=10"<<endl;
+cin>>N;}
+while ((N>10)|(N<0));
+
+    cout<<"А теперь саму матрицу"<<endl;
+
+     for (i=0;i<N;i++){for(j=0;j<N;j++){cin>>A[i][j];}}
+
+    cout<<"А теперь размеры В"<<endl;
+
+    int M2,N2;
+
+    cin>>M2>>N2;
+
+    cout<<"А теперь саму матрицу"<<endl;
+
+    for (i=0;i<M2;i++){for(j=0;j<N2;j++){cin>>B[i][j];}}
+
+
+if (line=="AX=B"){
+    Obr(N,A);
+    AxB(N,N,M2,N2,A,B,C);
+    for (i=0;i<N;i++){for(j=0;j<N2;j++){cout<<C[i][j]<<"  ";}cout<<endl;}
+
+}
+
+if (line=="XA=B"){
+    Obr(N,A);
+    AxB(M2,N2,N,N,A,B,C);
+    for (i=0;i<M2;i++){for(j=0;j<N;j++){cout<<C[i][j]<<"  ";}cout<<endl;}
+
+}
+
+
+
+
+return 0;
+}
+
